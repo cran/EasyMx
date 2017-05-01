@@ -1,0 +1,8 @@
+
+import(OpenMx)
+importFrom("methods", "slot")
+importFrom("stats", "cov", "lm", "model.matrix", "model.response",
+           "na.pass")
+
+#exportPattern("^[[:alpha:]]+")
+exportPattern("^emx.+")
