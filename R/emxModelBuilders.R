@@ -4,41 +4,41 @@
 
 
 #------------------------------------------------------------------------------
-emxFactorModel <- function(model, data, name, run=FALSE, identification, use, ordinal){
-	if(missing(name)){name <- 'Model'}
-	if(missing(use)){use <- sort(unique(unlist(model)))}
-	numVar <- length(use)
-	latents <- names(model)
-	manifests <- use
-	# TODO Write more general data processing module
-	if( nrow(data) == ncol(data) && all(data == t(data)) ){
-		data <- data[use, use]
-		bdata <- OpenMx::mxData(data, 'cov')
-	} else {
-		data <- data[,use]
-		if(missing(ordinal)){
-			if (is.data.frame(data)) {
-				ordinalCols <- sapply(data, is.ordered)
-				binaryCols <- sapply(data, is.binary)
-			} else {
-				ordinalCols <- rep(FALSE, numVar)
-				binaryCols <- rep(FALSE, numVar)
-			}
-		} else {
-			if(!all(ordinal %in% use)){stop('Some of the ordinal variables are not among those being used.  Either include the ordinal variables in use, or exclude the ordinal variables not being used.')}
-			ordinalCols <- rep(FALSE, ncol(data))
-			ordinalCols[match(ordinal, use)] <- TRUE
-			binaryCols <- sapply(data, is.binary)
-		}
-		if(!any(is.na(data)) && !any(ordinalCols)){
-			bdata <- OpenMx::mxData(cov(data), 'cov', means=colMeans(data), numObs=nrow(data))
-		} else {
-			if(any(ordinalCols)){
-				data[, ordinalCols] <- mxFactor(data[,ordinalCols], levels=sapply(data[,ordinalCols], function(x){sort(unique(x))}))
-			}
-			bdata <- OpenMx::mxData(data, 'raw')
-		}
+buildItemFactorModel <- function(model, name, bdata, use) {
+	if (!requireNamespace("rpf", quietly=TRUE)) stop("Please install package 'rpf' to use item factor models")
+	spec <- lapply(use, function(x) rpf::rpf.grm(outcomes=length(levels(bdata$observed[,x]))))
+	names(spec) <- use
+	
+	imat <- mxMatrix(name="item", values=mxSimplify2Array(lapply(spec, rpf::rpf.rparam)))
+	imat$free[,] <- !is.na(imat$values)
+	rownames(imat)[1:length(model)] <- names(model)
+	for (fx in 1:length(model)) {
+		noLoading <- setdiff(use, model[[fx]])
+		imat$values[fx,noLoading] <- 0
+		imat$free[fx,noLoading] <- FALSE
 	}
+	
+	qpts <- 49L
+	if (length(model) == 2) qpts <- 31L
+	if (length(model) == 3) qpts <- 21L
+	
+	plan <- mxComputeSequence(list(mxComputeEM(
+		'expectation', 'scores',
+		mxComputeNewtonRaphson(verbose=0L), information="oakes1999",
+	infoArgs=list(fitfunction='fitfunction')),
+	mxComputeOnce('fitfunction', 'gradient'),
+	mxComputeHessianQuality(),
+	mxComputeStandardError(),
+	mxComputeReportDeriv()))
+	
+	mxModel(name=name, imat, bdata,
+			mxExpectationBA81(ItemSpec=spec, qpoints=qpts),
+			mxFitFunctionML(),
+			plan)
+}
+
+buildLisrelFactorModel <- function(model, name, bdata, data, use, ordinalCols) {
+	latents <- names(model)
 	mmat <- emxMeans(x=use, free=!ordinalCols)
 	lmat <- emxLoadings(x=model)
 	rmat <- emxResiduals(x=use, free=!ordinalCols, values=1)
@@ -67,6 +67,69 @@ emxFactorModel <- function(model, data, name, run=FALSE, identification, use, or
 			thresholds=slot(threshList[[3]], 'name'))
 		)
 	}
+	bmodel
+}
+
+emxFactorModel <- function(model, data, name, run=FALSE, identification, use, ordinal, ...,
+							parameterization=c("lisrel", "ifa"), weight = as.character(NA)) {
+	garbageArguments <- list(...)
+	if (length(garbageArguments) > 0) {
+		stop("emxFactorModel does not accept values for the '...' argument")
+	}
+	if(missing(name)){name <- 'Model'}
+	if(missing(use)){
+		use <- unlist(model)
+		use <- use[!duplicated(use)]
+	}
+	numVar <- length(use)
+	parameterization <- match.arg(parameterization)
+	# TODO Write more general data processing module
+	if( nrow(data) == ncol(data) && all(data == t(data)) ){
+		if (parameterization == 'ifa') stop("Only raw data can be used with parameterization='ifa'")
+		if (!is.na(weight)) stop("Cannot use row weights with covariance data")
+		data <- data[use, use]
+		bdata <- OpenMx::mxData(data, 'cov')
+	} else {
+		weightCol <- NULL
+		if (!is.na(weight)) weightCol <- data[[weight]]
+		missingCol <- !(use %in% colnames(data))
+		if (any(missingCol)) {
+			stop(paste("Cannot find column", omxQuotes(use[missingCol]), "in the data"))
+		}
+		data <- data[,use,drop=FALSE]
+		if(missing(ordinal)){
+			if (is.data.frame(data)) {
+				ordinalCols <- sapply(data, is.ordered)
+			} else {
+				ordinalCols <- rep(FALSE, numVar)
+			}
+		} else {
+			if(!all(ordinal %in% use)){stop('Some of the ordinal variables are not among those being used.  Either include the ordinal variables in use, or exclude the ordinal variables not being used.')}
+			ordinalCols <- rep(FALSE, ncol(data))
+			ordinalCols[match(ordinal, use)] <- TRUE
+		}
+		if(!any(is.na(data)) && !any(ordinalCols) && is.na(weight)) {
+			bdata <- OpenMx::mxData(cov(data), 'cov', means=colMeans(data), numObs=nrow(data))
+		} else {
+			unconverted <- ordinalCols & !sapply(data, is.ordered)
+			if(any(unconverted)) {
+				for (cx in which(unconverted)) {
+					data[[cx]] <- mxFactor(data[[cx]], levels=sort(unique(data[[cx]])))
+				}
+			}
+			weightedData <- data
+			if (!is.na(weight)) weightedData[[weight]] <- weightCol
+			bdata <- OpenMx::mxData(weightedData, 'raw', weight=weight)
+		}
+	}
+	if (parameterization == 'lisrel') {
+		bmodel <- buildLisrelFactorModel(model, name, bdata, data, use, ordinalCols)
+	} else if (parameterization == 'ifa') {
+		if (!all(ordinalCols)) stop(paste("All columns must be ordinal for parameterization=",
+			omxQuotes(parameterization)))
+		if (length(model) > 3L) stop("More than 3 latent factors are not supported for IFA models")
+		bmodel <- buildItemFactorModel(model, name, bdata, use)
+	} else { stop(parameterization) }
 	if(run){return(mxRun(bmodel))}
 	return(bmodel)
 }

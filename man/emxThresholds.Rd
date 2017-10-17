@@ -10,13 +10,14 @@ This function creates a threshold matrix as an MxMatrix object.
 }
 
 \usage{
-emxThresholds(data, ordinalCols)
+emxThresholds(data, ordinalCols, deviation=TRUE)
 }
 
 
 \arguments{
    \item{data}{The data frame or matrix for which thresholds should be created.}
    \item{ordinalCols}{optional character vector.  The names of the ordinal variables in the data.}
+   \item{deviation}{logical. Return the list of OpenMx objects needed for the deviation form of the threholds (default) or just the raw thresholds matrix}
 }
 
 %\details{

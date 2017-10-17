@@ -1,2 +1,3 @@
-emxExamples                     Examples created to demonstrate the package's functionality.
+emxExamples                     Examples created to demonstrate the package's functionality
+jointFactor                     One factor model of ordinal and continuous data fit with ML and WLS
 

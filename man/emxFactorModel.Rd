@@ -11,8 +11,10 @@ This function creates a factor model as an MxModel object.
 }
 
 \usage{
-emxFactorModel(model, data, name, run=FALSE, identification, use, ordinal)
-emxModelFactor(model, data, name, run=FALSE, identification, use, ordinal)
+emxFactorModel(model, data, name, run=FALSE, identification, use, ordinal,
+    ..., parameterization=c("lisrel", "ifa"), weight = as.character(NA))
+emxModelFactor(model, data, name, run=FALSE, identification, use, ordinal,
+    ..., parameterization=c("lisrel", "ifa"), weight = as.character(NA))
 }
 
 
@@ -21,9 +23,12 @@ emxModelFactor(model, data, name, run=FALSE, identification, use, ordinal)
    \item{data}{data used for the model}
    \item{name}{character.  Optional name of the model created.}
    \item{run}{logical. Whether to run the model before returning.}
-   \item{identification}{Not yet implemented.  How the model is identified.  Currently idngored.}
+   \item{identification}{Not yet implemented.  How the model is identified.  Currently ignored.}
    \item{use}{character vector.  The names of the variables to use.}
    \item{ordinal}{character vector.  The names of the ordinal variables.}
+   \item{...}{Force later arguments to be named.  ... is ignored.}
+   \item{parameterization}{character.  Whether to specify the model as a LISREL SEM or as an Item Factor Analysis}
+   \item{weight}{character. Name of the data column used for sample weights.}
 }
 
 \details{

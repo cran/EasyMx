@@ -10,8 +10,7 @@
 # Source the definitions
 require(OpenMx)
 
-require(emx)
-
+require(EasyMx)
 
 #------------------------------------------------------------------------------
 # Factor Model Examples
@@ -49,7 +48,17 @@ modindices(fit)
 emap <- list(visual=paste0('x', 1:3), textual=paste0('x', 4:6), speed=paste0('x', 7:9))
 efit <- emxFactorModel(emap, data=HolzingerSwineford1939, run=TRUE)
 
+#------------------------------------------------------------------------------
+# Ordinal Factor Model Examples
 
+library(rpf)
+data(LSAT7)
+colnames(LSAT7) <- c(paste0('i',1:5), 'freq')
+mod <- emxFactorModel(list(F1=paste0('i', 1:5)), data=LSAT7,
+                      ordinal=paste0('i', 1:5),
+                      parameterization = "ifa", weight='freq')
+mod <- mxRun(mod)
+summary(mod)
 
 # Example
 # OpenMx Frontpage

@@ -100,7 +100,7 @@ is.binary <- function(x){
 #  2. character indicating the names of the variables in data
 #  3. numeric indicating which columns in the data are ordinal
 # TODO: Why not detect which columns are ordinal using is.factor?
-emxThresholds <- function(data, ordinalCols=rep(TRUE, ncol(data))){
+emxThresholds <- function(data, ordinalCols=rep(TRUE, ncol(data)), deviation=TRUE){
 	if(length(ordinalCols) <= 0){
 		stop('You have not specified any ordinal columns.')
 	}
@@ -129,7 +129,7 @@ emxThresholds <- function(data, ordinalCols=rep(TRUE, ncol(data))){
 	numBinary <- sum(isBinary)
 	maxLevels <- max(numOrdinalLevels)
 	numThresholds <- maxLevels-1
-	thrdnam <- paste(rep(ordnam, each=numThresholds), 'ThrDev', 1:numThresholds, sep='')
+	thrdnam <- paste(rep(ordnam, each=numThresholds), 'Thr', ifelse(deviation, 'Dev', ''), 1:numThresholds, sep='')
 	unitLower <- OpenMx::mxMatrix("Lower", numThresholds, numThresholds, values=1, free=FALSE, name="unitLower")
 	thrfre <- matrix(NA, numThresholds, numOrdinal)
 	thrval <- matrix(NA, numThresholds, numOrdinal)
@@ -139,7 +139,7 @@ emxThresholds <- function(data, ordinalCols=rep(TRUE, ncol(data))){
 		#	thrval[,i] <- c(0, rep(.2, numThresholds-1))
 		#} else {
 			thrfre[,i] <- c(rep(TRUE, numOrdinalLevels[i]-1), rep(FALSE, numThresholds - (numOrdinalLevels[i]-1)))
-			thrval[,i] <- rep(.2, numThresholds)
+			thrval[,i] <- c(-(numThresholds-1)*.1, rep(.2, numThresholds-1))
 		#}
 	}
 	thresholdDeviations <- OpenMx::mxMatrix("Full", 
@@ -148,10 +148,23 @@ emxThresholds <- function(data, ordinalCols=rep(TRUE, ncol(data))){
 			free = thrfre,
 			labels=thrdnam,
 			lbound = rep( c(-Inf,rep(.01, (numThresholds-1))) , numOrdinal), # TODO adjust increment value
-			dimnames = list(c(), varnam[ordinalCols]),
+			dimnames = list(c(), varnam[ordinalCols])
 					)
-	saturatedThresholds <- OpenMx::mxAlgebra(unitLower %*% thresholdDeviations, name="thresholdMatrix", dimnames=dimnames(thresholdDeviations))
-	ret <- list(unitLower, thresholdDeviations, saturatedThresholds)
+	thresholdMatrix <- OpenMx::mxMatrix("Full", 
+			name="thresholdMatrix", nrow=numThresholds, ncol=numOrdinal,
+			values=apply(thrval, 2, cumsum),
+			free = thrfre,
+			labels=thrdnam,
+			dimnames = list(c(), varnam[ordinalCols])
+					)
+	thresholdMatrix$values[!thrfre] <- NA
+	if(deviation==TRUE){
+		saturatedThresholds <- OpenMx::mxAlgebra(unitLower %*% thresholdDeviations, name="thresholdMatrix", dimnames=dimnames(thresholdDeviations))
+		ret <- list(unitLower, thresholdDeviations, saturatedThresholds)
+	} else {
+		ret <- thresholdMatrix
+	}
+	# N.B. This whole if() section is skipped
 	if(any(isBinary)){
 		Iblock <- diag(1, numBinary)
 		colnames(Iblock) <- binnam
