@@ -13,10 +13,10 @@ Description: Utilities for building certain kinds of common matrices and models 
 Depends: R (>= 3.0.0), OpenMx
 Suggests: rpf (>= 0.45)
 License: GPL
-Version: 0.2
+Version: 0.2-1
 NeedsCompilation: no
 URL: https://bitbucket.org/mhunter/easymx
 BugReports: https://bitbucket.org/mhunter/easymx/issues
-Packaged: 2017-10-17 22:13:58 UTC; mhunter1
+Packaged: 2017-10-18 22:54:20 UTC; mhunter1
 Repository: CRAN
-Date/Publication: 2017-10-17 22:19:54 UTC
+Date/Publication: 2017-10-19 18:10:00 UTC
