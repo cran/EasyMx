@@ -9,8 +9,8 @@ This function creates an MxModel and associated objects for a basic Twin model.
 }
 
 \usage{
-emxTwinModel(model, relatedness, data, run=FALSE, use, name='model')
-emxModelTwin(model, relatedness, data, run=FALSE, use, name='model')
+emxTwinModel(model, relatedness, data, run=FALSE, use, name='model', components='ACE')
+emxModelTwin(model, relatedness, data, run=FALSE, use, name='model', components='ACE')
 }
 
 
@@ -21,10 +21,11 @@ emxModelTwin(model, relatedness, data, run=FALSE, use, name='model')
    \item{run}{logical. Whether to run the model before returning.}
    \item{use}{character vector. Names of the variables used in the model.}
    \item{name}{character. Name of the model.}
+   \item{components}{character. Name of the variance components to include. Current valid options are 'ACE' and 'ADE'}
 }
 
 \details{
-Because the model argument is ignored and the relatedness argument has limited use, this function only constructs a very basic and rigid Twin model.  It creates a Cholesky model with A, C, and E components. The means are constrained equal across twins.
+Because the model argument is ignored and the relatedness argument has limited use, this function only constructs a very basic and rigid Twin model.  It creates a Cholesky model with A, C, and E components or a Cholesky model with A, D, and E components. The means are constrained equal across twins.
 }
 
 \value{

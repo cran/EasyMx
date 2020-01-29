@@ -45,7 +45,7 @@ The \code{p} argument is optional.  If not specified, the function will create a
 
 \examples{
    
-# Example
+# Factor Mixture Example
 require(EasyMx)
 data(myFADataRaw)
 xmap1 <- list(F1=paste0('x', 1:6), F2=paste0('y', 1:3), F3=paste0('z', 1:3))
@@ -60,6 +60,27 @@ mod <- emxMixtureModel(list(mod1, mod2), data=myFADataRaw)
 #  2. include run=TRUE in the arguments above
 summary(mod)
 coef(mod)
+
+# Latent Profile Example
+require(EasyMx)
+
+m1 <- omxSaturatedModel(demoOneFactor)[[1]]
+m1 <- mxRename(m1, 'profile1')
+
+m2 <- omxSaturatedModel(demoOneFactor)[[1]]
+m2 <- mxRename(m2, 'profile2')
+
+mod <- emxMixtureModel(list(m1, m2), data=demoOneFactor)
+# To estimate parameters either
+#  1. mod <- mxRun(mod)   or
+#  2. include run=TRUE in the arguments above
+summary(mod)
+coef(mod)
+
+mxGetExpected(mod$profile1, 'covariance')
+mxGetExpected(mod$profile1, 'means')
+mxGetExpected(mod$profile2, 'covariance')
+mxGetExpected(mod$profile2, 'means')
 
 
 }

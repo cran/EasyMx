@@ -33,7 +33,7 @@ mxEval(thresholdDeviations, mlFit)
 #------------------------------------------------------------------------------
 # WLS version of model
 
-wlsMod <- mxModel(mlMod, mxDataWLS(jointData), mxFitFunctionWLS())
+wlsMod <- mxModel(mlMod, mxDataWLS(jointdata), mxFitFunctionWLS())
 wlsFit <- mxRun(wlsMod)
 
 

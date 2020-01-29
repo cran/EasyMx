@@ -1,11 +1,11 @@
 #------------------------------------------------------------------------------
 matrix2path <- function(x, arrows=1){
 	mxPath(
-		from=rep(colnames(x@values), each=nrow(x)),
-		to=rep(rownames(x@values), times=ncol(x)),
-		values=c(x@values),
-		free=c(x@free),
-		labels=c(x@labels),
+		from=rep(colnames(x$values), each=nrow(x)),
+		to=rep(rownames(x$values), times=ncol(x)),
+		values=c(x$values),
+		free=c(x$free),
+		labels=c(x$labels),
 		arrows=arrows)
 }
 
@@ -20,9 +20,9 @@ emxLoadings <- function(x, values=.8, free=TRUE, path=FALSE){
 		name='Loadings'
 	)
 	for(i in 1:length(x)){
-		ret@values[x[[names(x)[i]]], names(x)[i]] <- values
-		ret@free[x[[names(x)[i]]], names(x)[i]] <- free
-		ret@labels[x[[names(x)[i]]], names(x)[i]] <- paste('Load', names(x)[i], x[[names(x)[i]]], sep='')
+		ret$values[x[[names(x)[i]]], names(x)[i]] <- values
+		ret$free[x[[names(x)[i]]], names(x)[i]] <- free
+		ret$labels[x[[names(x)[i]]], names(x)[i]] <- paste('Load', names(x)[i], x[[names(x)[i]]], sep='')
 	}
 	if(path) { ret <- matrix2path(ret)}
 	return(ret)

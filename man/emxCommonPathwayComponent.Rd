@@ -1,23 +1,25 @@
-\name{emxCholeskyComponent}
-\alias{emxCholeskyComponent}
+\name{emxCommonPathwayComponent}
+\alias{emxCommonPathwayComponent}
 
-\title{Creates component for a Biometric Cholesky Model}
+\title{Creates component for a Biometric Common Pathway Model}
 
 \description{
-This function creates all the objects needed for a Cholesky component.
+UNDER ACTIVE DEVELOPMENT. DO NOT TRUST. This function creates all the objects needed for a Common Pathway component.
 }
 
 \usage{
-emxCholeskyComponent(x, xname, xvalues, xfree,
-                     h=2, hname=paste0('H', xname), hvalues, hlabels)
+emxCommonPathwayComponent(x, xname, xvalues=.8, xfree=TRUE, xlbound=NA, xubound=NA,
+                          h=2, hname=paste0('H', xname), hvalues, hlabels)
 }
 
 
 \arguments{
    \item{x}{character vector. The base names of the variables used for the matrix with no repetition for twins (x, y, z not x1, y1, z1, x2, y2, z2).}
    \item{xname}{character. Name of the component matrix.}
-   \item{xvalues}{numeric vector. Values of the component matrix.}
-   \item{xfree}{logical vector. Whether each element of the component matrix is freely estimates.}
+   \item{xvalues}{Matrix of fixed and/or starting values of parameters}
+   \item{xfree}{Matrix of TRUE (for free) and FALSE (for fixed) values}
+   \item{xlbound}{Matrix of numeric lower bounds for parameters}
+   \item{xubound}{Matrix of numeric upper bounds for parameters}
    \item{h}{numeric. The number of variables for the relatedness matrix, i.e. the number of critters with relationships}
    \item{hname}{character. Name of the relatedness matrix.}
    \item{hvalues}{numeric vector. Values for the relatedness matrix.}
