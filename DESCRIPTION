@@ -1,5 +1,5 @@
 Package: EasyMx
-Date: 2020-01-29
+Date: 2020-01-30
 Type: Package
 Title: Easy Model-Builder Functions for 'OpenMx'
 Authors@R: c(person(c("Michael", "D."), "Hunter", email="mhunter.ou@gmail.com", role=c("aut", "cre")),
@@ -13,10 +13,10 @@ Description: Utilities for building certain kinds of common matrices and models 
 Depends: R (>= 3.0.0), OpenMx
 Suggests: rpf (>= 0.45)
 License: GPL
-Version: 0.2-11
+Version: 0.2-12
 NeedsCompilation: no
 URL: https://bitbucket.org/mhunter/easymx
 BugReports: https://bitbucket.org/mhunter/easymx/issues
-Packaged: 2020-01-29 18:55:26 UTC; mhunter
+Packaged: 2020-01-30 06:44:42 UTC; mhunter
 Repository: CRAN
-Date/Publication: 2020-01-29 19:50:08 UTC
+Date/Publication: 2020-01-30 09:00:22 UTC

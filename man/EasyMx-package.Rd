@@ -29,11 +29,13 @@ Finally, a mixture model helper is provided: \code{\link{emxMixtureModel}}.
 \examples{
 
 # Make and run a one factor model
+\dontrun{
 require(EasyMx)
 
 data(demoOneFactor)
 fmod <- list(G=names(demoOneFactor))
 fit1 <- emxFactorModel(fmod, demoOneFactor, run=TRUE)
 summary(fit1)
+}
 }
 

@@ -50,6 +50,7 @@ When missing, the \code{times} are assumed to start at zero and increment by one
 # Example
 require(EasyMx)
 data(myLongitudinalData)
+\dontrun{
 mod <- emxGrowthModel('Linear', data=myLongitudinalData, use=names(myLongitudinalData), run=TRUE)
-
+}
 }

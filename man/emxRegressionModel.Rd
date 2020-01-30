@@ -59,8 +59,10 @@ data(myRegDataRaw)
 myrdr <- myRegDataRaw
 myrdr[1, 4] <- NA
 
+\dontrun{
 run <- emxRegressionModel(y~1+x*z, data=myrdr, run=TRUE)
 summary(run)
+}
 
 summary(lm(y~1+x*z, data=myrdr))
 

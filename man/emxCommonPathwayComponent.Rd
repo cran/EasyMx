@@ -66,7 +66,8 @@ fitfun <- mxFitFunctionML()
 comlist <- c(acomp, ccomp, ecomp, list(totalVar, totalMean, expect, fitfun))
 
 model <- mxModel('model', comlist, mxData(mzdzData, 'raw'))
+\dontrun{
 run2 <- mxRun(model)
-
+}
 
 }
