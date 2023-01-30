@@ -15,7 +15,7 @@ emxMeans(x, values=0, free=TRUE, path=FALSE, type='saturated', name, column=TRUE
 
 
 \arguments{
-   \item{x}{character vector. The names of the variables for which covariances are created.}
+   \item{x}{character vector. The names of the variables for which means are created.}
    \item{values}{numeric vector. See Details.}
    \item{free}{logical vector. See Details.}
    \item{path}{logical. Whether to return the MxPath object instead of the MxMatrix.}

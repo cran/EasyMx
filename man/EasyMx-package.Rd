@@ -16,6 +16,8 @@ The matrix builder functions are utilities for building common structural equati
 
 The model builder functions are higher-level utilities for building common kinds of structural equation models.  The model builders often call several matrix builders.  The model builders include \code{\link{emxFactorModel}} for (multiple) factor models, \code{\link{emxGrowthModel}} for latent growth curve models, and \code{\link{emxRegressionModel}} for full-information likelihood estimation of regression for observed variables.
 
+There are also a few model builder functions for non-standard structural equation models.  In particular, the \code{\link{emxVARModel}} function creates vector autoregressive models, and the \code{\link{emxStateSpaceMixtureModel}} function creates state space mixture models.
+
 A third category of functions encompasses special functions for behavior genetics modeling.  Some of these functions are matrix builders, and others are model builders.  The lowest-level functions for behavior genetics are \code{\link{emxCholeskyVariance}}, \code{\link{emxGeneticFactorVariance}}, \code{\link{emxRelatednessMatrix}}, and \code{\link{emxKroneckerVariance}}.
 
 A higher-level set of behavior genetics matrix builders create all the matrices and algebraic statements needed for e.g. the A component of an ACE model.  These functions are \code{\link{emxCholeskyComponent}} and \code{\link{emxGeneticFactorComponent}}.

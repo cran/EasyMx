@@ -239,7 +239,7 @@ emxRegressionModel <- function(model, data, type='Steven', run, ...){
 	colnames(theMatri) <- mnam
 	whichInt <- match('(Intercept)', colnames(theMatri))
 	if(!is.na(whichInt)){
-		theMatri <- theMatri[, -whichInt]
+		theMatri <- theMatri[, -whichInt, drop=FALSE]
 	}
 	
 	namRespo <- names(theFrame)[1]
